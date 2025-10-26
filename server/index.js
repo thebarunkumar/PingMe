@@ -12,6 +12,7 @@ import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./config/socket.js"; // Make sure socket.js exports both app and server
 
 const PORT = process.env.PORT || 5001;
+const __dirname = path.resolve();
 
 // Middleware
 app.use(express.json());
@@ -27,6 +28,13 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+  });
+}
 
 // Root route for health check
 app.get("/", (req, res) => {

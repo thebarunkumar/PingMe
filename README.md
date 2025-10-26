@@ -14,9 +14,6 @@ Real-time chat application built with React (Vite) on the frontend and Node.js/E
 
 ## Monorepo Structure
 
-- `client` — React + Vite app
-- `server` — Node/Express + Socket.IO + MongoDB + Cloudinary
-
 ```
 PingMe/
 ├─ client/
@@ -37,131 +34,168 @@ PingMe/
 
 ## Tech Stack
 
-- Frontend: React 18, Vite 5, React Router, Zustand, Tailwind + DaisyUI, axios, react-hot-toast, lucide-react
-- Backend: Node 18+, Express, Socket.IO, MongoDB (Mongoose), JWT, bcryptjs, Cloudinary
+- **Frontend:** React 18, Vite 5, React Router, Zustand, Tailwind + DaisyUI, axios, react-hot-toast, lucide-react
+- **Backend:** Node 18+, Express, Socket.IO, MongoDB (Mongoose), JWT, bcryptjs, Cloudinary
+
+---
 
 ## Local Setup
 
-1) Prerequisites
+### 1. Prerequisites
 - Node.js 18+ and npm
 - MongoDB connection string
 - Cloudinary account (for image uploads)
 
-2) Backend
-- cd `server`
-- Create `.env` with (example values shown):
-  - `PORT=3000`
-  - `MONGODB_URI=YOUR_MONGODB_URI`
-  - `JWT_SECRET=YOUR_LONG_SECRET`
-  - `CLOUDINARY_CLOUD_NAME=...`
-  - `CLOUDINARY_API_KEY=...`
-  - `CLOUDINARY_API_SECRET=...`
-  - `CLIENT_ORIGIN=http://localhost:5173`
-  - Optional convenience aliases:
-    - `SERVER_URL=http://localhost:3000`
-    - `CLIENT_URL=http://localhost:5173`
-- Install and run:
-  - `npm ci`
-  - `npm run dev`
+### 2. Backend
+```bash
+cd server
+```
+Create `.env` with (example values shown):
 
-3) Frontend
-- cd `client`
-- Optional `.env.local` for dev:
-  - `VITE_API_URL=http://localhost:3000/api`
-  - `VITE_SOCKET_URL=http://localhost:3000`
-- Install and run:
-  - `npm ci`
-  - `npm run dev`
-- App: http://localhost:5173
+```
+PORT=3000
+MONGODB_URI=YOUR_MONGODB_URI
+JWT_SECRET=YOUR_LONG_SECRET
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+CLIENT_URL=http://localhost:5173
+SERVER_URL=http://localhost:3000
+CLIENT_URL=http://localhost:5173
+```
+
+Then install and run:
+```bash
+npm ci
+npm run dev
+```
+
+### 3. Frontend
+```bash
+cd client
+```
+Create `.env.local` for dev:
+```
+VITE_API_URL=http://localhost:3000/api
+VITE_SOCKET_URL=http://localhost:3000
+```
+
+Then install and run:
+```bash
+npm ci
+npm run dev
+```
+
+App will run at: [http://localhost:5173](http://localhost:5173)
+
+---
 
 ## Environment Variables
 
-Backend (`server/.env`)
+### Backend (`server/.env`)
 - `PORT` (default 3000)
 - `MONGODB_URI`
 - `JWT_SECRET`
 - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-- `CLIENT_ORIGIN` — Comma-separated list of allowed origins
-  - Example: `https://your-app.vercel.app,http://localhost:5173`
-- Optional:
-  - `CLIENT_URL` — Single allowed origin if not using `CLIENT_ORIGIN`
+- `CLIENT_URL` — Comma-separated list of allowed URLs  
+  Example:  
+  ```
+  https://your-frontend-domain.com,http://localhost:5173
+  ```
 
-Frontend (`client` env / Vercel Project Env)
-- `VITE_API_URL` — Full API base with `/api`, e.g. `https://api.example.com/api`
-- `VITE_SOCKET_URL` — Socket origin without `/api`, e.g. `https://api.example.com`
+Optional:
+- `CLIENT_URL` — Single allowed URL if not using multiple.
 
-Defaults (if not set)
-- Dev: axios -> `http://localhost:3000/api`, socket -> `http://localhost:3000`
-- Prod: axios -> `/api`, socket -> `/` (works if you configure Vercel rewrites)
+### Frontend (`client/.env`)
+- `VITE_API_URL` — Full API base with `/api`, e.g. `https://your-backend-domain.com/api`
+- `VITE_SOCKET_URL` — Socket URL without `/api`, e.g. `https://your-backend-domain.com`
+
+**Defaults (if not set)**  
+- Dev: axios → `http://localhost:3000/api`, socket → `http://localhost:3000`
+- Prod: axios → `/api`, socket → `/` (works when frontend and backend share the same domain)
+
+---
 
 ## Scripts
 
-Frontend (client)
+### Frontend (`client`)
 - `npm run dev` — Vite dev server
 - `npm run build` — Production build
-- `npm run preview` — Preview build locally
+- `npm run preview` — Preview production build locally
 
-Backend (server)
+### Backend (`server`)
 - `npm run dev` — Start with nodemon
 - `npm start` — Start with node
 
+---
+
 ## Deployment
 
-GitHub
-- `.env` files are ignored (see `.gitignore`). Do not commit secrets.
-- Push the repo to GitHub.
+You can deploy the backend to any WebSocket-friendly host such as **Render**, **Railway**, **Fly.io**, or your own **VPS**.
 
-Frontend on Vercel
-- Create a new Vercel project, set Project Root to `client`
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Node: 18.x or LTS
+### Backend Deployment
+1. Deploy the `server` folder.
+2. Set environment variables:
+   ```
+   PORT=3000
+   MONGODB_URI=your_connection_string
+   JWT_SECRET=your_secret
+   CLOUDINARY_CLOUD_NAME=...
+   CLOUDINARY_API_KEY=...
+   CLOUDINARY_API_SECRET=...
+   CLIENT_URL=https://your-frontend-domain.com
+   ```
+3. Ensure your host allows:
+   - WebSocket connections
+   - CORS from your frontend domain(s)
 
-Options for backend URL
-- Env-based (recommended):
-  - Set in Vercel:
-    - `VITE_API_URL=https://YOUR_BACKEND_HOST/api`
-    - `VITE_SOCKET_URL=https://YOUR_BACKEND_HOST`
-- Rewrite-based:
-  - `client/vercel.json` is included to proxy `/api` and `/socket.io` to your backend host. Update it with your production backend origin when ready.
+### Frontend Deployment
+1. Deploy the `client` build output (`dist/`) to your chosen static host (e.g., Netlify, GitHub Pages, Firebase Hosting, Cloudflare Pages, etc.).
+2. Set frontend environment variables before building:
+   ```
+   VITE_API_URL=https://your-backend-domain.com/api
+   VITE_SOCKET_URL=https://your-backend-domain.com
+   ```
+3. Build and deploy:
+   ```bash
+   npm run build
+   ```
 
-Backend Hosting
-- Deploy to a WebSocket-friendly host (Render, Railway, Fly, VPS)
-- Set envs: `PORT`, `MONGODB_URI`, `JWT_SECRET`, `CLOUDINARY_*`, `CLIENT_ORIGIN=your Vercel URL(s)`
-- Ensure CORS and Socket.IO CORS include your Vercel origin(s)
+---
 
-Note on Vercel serverless
-- Vercel’s serverless functions are not ideal for Socket.IO persistent connections. Prefer a dedicated host for the Node server.
+## API Overview (High-Level)
 
-## API Overview (high-level)
+**Base:** `/api`
 
-Base: `/api`
-
-Auth
+**Auth**
 - `POST /auth/signup`
 - `POST /auth/login`
 - `POST /auth/logout`
 - `GET /auth/check` (protected)
 - `PUT /auth/update-profile` (protected)
 
-Messages
-- Endpoints under `/messages` (protected)
+**Messages**
+- Routes under `/messages` (protected)
 
-Socket.IO
+**Socket.IO**
 - Path: `/socket.io`
 - Query: `?userId=<id>`
 - Event: `getOnlineUsers`
 
+---
+
 ## Troubleshooting
 
-- 401/403 in production
-  - Ensure `CLIENT_ORIGIN` includes your exact Vercel URL
-  - Cookies require https and `secure: true` in production
-- Socket not connecting
-  - Set `VITE_SOCKET_URL` or add `/socket.io` rewrites
-  - Backend must allow WebSocket upgrades and CORS from the client
-- 404 for `/api`
-  - Set `VITE_API_URL` or configure the rewrites above
+- **401/403 in production:**  
+  Ensure `CLIENT_URL` or `CLIENT_URL` includes your deployed frontend URL.
+
+- **Socket not connecting:**  
+  Make sure `VITE_SOCKET_URL` is set correctly, and backend CORS allows your frontend domain.
+
+- **404 for `/api` routes:**  
+  Confirm `VITE_API_URL` points to your backend API base.
+
+---
 
 ## License
 
