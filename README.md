@@ -50,7 +50,7 @@ PingMe/
 2) Backend
 - cd `server`
 - Create `.env` with (example values shown):
-  - `PORT=5001`
+  - `PORT=3000`
   - `MONGODB_URI=YOUR_MONGODB_URI`
   - `JWT_SECRET=YOUR_LONG_SECRET`
   - `CLOUDINARY_CLOUD_NAME=...`
@@ -91,7 +91,7 @@ Frontend (`client` env / Vercel Project Env)
 - `VITE_SOCKET_URL` — Socket origin without `/api`, e.g. `https://api.example.com`
 
 Defaults (if not set)
-- Dev: axios -> `http://localhost:5001/api`, socket -> `http://localhost:5001`
+- Dev: axios -> `http://localhost:3000/api`, socket -> `http://localhost:3000`
 - Prod: axios -> `/api`, socket -> `/` (works if you configure Vercel rewrites)
 
 ## Scripts
