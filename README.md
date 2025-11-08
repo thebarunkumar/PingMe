@@ -183,7 +183,7 @@ You can deploy the backend to any WebSocket-friendly host such as **Render**, **
 - Event: `getOnlineUsers`
 
 ---
-
+ 
 ## Troubleshooting
 
 - **401/403 in production:**  
